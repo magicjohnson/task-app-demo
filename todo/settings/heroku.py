@@ -10,6 +10,6 @@ DATABASES['default'] = dj_database_url.config()
 
 EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 
-
+ALLOWED_HOSTS = ['task-app-demo.herokuapp.com']
 
 
