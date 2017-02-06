@@ -1,0 +1,113 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load socialaccount %}
+
+{% block content %}
+    <div ng-app="app">
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container">
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if user and not user.is_anonymous %}
+                            <li><a>Hello <b>{{ user.get_full_name|default:user.username }}</b></a></li>
+                            <li>
+                                <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <p class="navbar-btn">
+                                    <a class="btn btn-default" href="{% provider_login_url "google" %}">Login with
+                                        Google</a>
+                                </p>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        {% if user and not user.is_anonymous %}
+            {% verbatim %}
+            <div class="container m-t-30">
+                <section class="todo-app" ng-controller="TaskController" ng-cloak>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="well white">
+                                <form class="form">
+                                    <div class="form-group">
+                                        <label for="task-name" class="control-label">Task name</label>
+                                        <input class="form-control" type="text" id="task-name" ng-model="task.name"
+                                               required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="task-description" class="control-label">Task descripition</label>
+                                        <textarea ng-model="task.description" class="form-control vertical" rows="2"
+                                                  id="task-description"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary"
+                                                ng-click="addTask()" ng-show="task.isNew()">
+                                            Submit new
+                                        </button>
+                                        <button type="submit" class="btn btn-primary"
+                                                ng-click="updateTask()" ng-hide="task.isNew()">
+                                            Save
+                                        </button>
+                                        <a class="btn btn-danger"
+                                           ng-click="deleteTask()" ng-show="task.isOwner()">Delete</a>
+                                        <a class="btn btn-default"
+                                           ng-click="clearForm()" ng-hide="task.isNew()">Add new</a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="well white">
+                                <ul class="list-unstyled" ng-repeat="task in tasks" ng-show="tasks.length">
+                                    <li ng-hide="hideCompleted && task.isCompleted()">
+                                        <div class="checkbox">
+                                            <span class="pull-right">
+                                                <span ng-show="task.isCompleted()">completed by: {{ task.completed_by }}</span>
+
+                                                <a class="btn btn-round btn-flat btn-default"
+                                                   ng-click="editTask(task, $index)" ng-show="task.isOwner()">
+                                                    <i class="ma md-edit"></i>
+                                                </a>
+
+                                        </span>
+                                            <label class="">
+                                                <input type="checkbox"
+                                                       ng-disabled="!task.canChangeStatus()"
+                                                       ng-true-value="'done'"
+                                                       ng-false-value="'open'"
+                                                       ng-model="task.status"
+                                                       ng-click="changeTaskStatus(task)">
+                                                {{ task.name }}
+                                                <p>
+                                                    <small>{{ task.description }}</small>
+                                            </label>
+
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <button class="btn btn-info" ng-click="toggleCompleted()">Toggle completed tasks</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            {% endverbatim %}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-resource.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-cookies.min.js"></script>
+    <script src="{% static "app/js/app.js" %}"></script>
+    <script src="{% static "app/js/controllers.js" %}"></script>
+    <script src="{% static "app/js/services.js" %}"></script>
+{% endblock %}

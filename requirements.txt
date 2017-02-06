@@ -1,0 +1,7 @@
+Django==1.10.5
+djangorestframework==3.5.3
+dj-config-url==0.1.1
+dj-static==0.0.6
+django-allauth==0.30.0
+gunicorn==19.6.0
+psycopg2==2.6.2
