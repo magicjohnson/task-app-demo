@@ -4,18 +4,24 @@ controllers.controller('TaskController', function ($scope, Task) {
     $scope.tasks = Task.query();
     $scope.task = new Task();
     $scope.index = -1;
-    console.log($scope.task.isNew());
+
+    $scope.editTask = function (task, index) {
+        $scope.task = task;
+        $scope.index = index;
+    };
+
+    $scope.clearForm = function() {
+        $scope.task = new Task();
+    };
+
     $scope.addTask = function () {
         $scope.task.$save(function () {
             $scope.tasks.push($scope.task);
         });
     };
+
     $scope.updateTask = function () {
         $scope.task.$update();
-    };
-    $scope.editTask = function (task, index) {
-        $scope.task = task;
-        $scope.index = index
     };
 
     $scope.deleteTask = function () {
@@ -24,9 +30,6 @@ controllers.controller('TaskController', function ($scope, Task) {
             $scope.clearForm();
         });
 
-    };
-    $scope.clearForm = function() {
-        $scope.task = new Task();
     };
 
     $scope.changeTaskStatus = function (task) {
