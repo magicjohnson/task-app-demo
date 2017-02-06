@@ -1,2 +1,0 @@
-# Small task management application
-
